@@ -1,3 +1,4 @@
+var _global = require('./global');
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
@@ -21,6 +22,9 @@ app.use(logger('dev'));
 //app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+var users = require('./routes/users');
+app.use('/api/users', users);
 
 
 // catch 404 and forward to error handler

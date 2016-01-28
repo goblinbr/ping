@@ -1,3 +1,4 @@
+var _global = require('./global');
 var assert = require('assert');
 
 describe('String#split', function(){
