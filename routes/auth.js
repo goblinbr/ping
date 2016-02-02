@@ -1,85 +1,141 @@
 var jwt = require('jwt-simple');
- 
+var userdao = require('../js/userdao');
+
 var auth = {
- 
-  login: function(req, res) {
- 
-    var username = (req.body) ? req.body.username : req.query.username;
-    var password = (req.body) ? req.body.password : req.query.password;
- 
-    if (username == '' || password == '') {
-      res.status(401);
-      res.json({
-        "status": 401,
-        "message": "Invalid credentials"
-      });
-      return;
-    }
- 
-    // Fire a query to your DB and check if the credentials are valid
-    var dbUserObj = auth.validate(username, password);
-   
-    if (!dbUserObj) { // If authentication fails, we send a 401 back
-      res.status(401);
-      res.json({
-        "status": 401,
-        "message": "Invalid credentials"
-      });
-      return;
-    }
- 
-    if (dbUserObj) {
- 
-      // If authentication is success, we will generate a token
-      // and dispatch it to the client
- 
-      res.json(genToken(dbUserObj));
-    }
- 
-  },
- 
-  validate: function(username, password) {
-    // spoofing the DB response for simplicity
-    var dbUserObj = { // spoofing a userobject from the DB. 
-      name: 'arvind',
-      role: 'admin',
-      username: 'arvind@myapp.com',
-      email: 'arvind@myapp.com'
-    };
- 
-    return dbUserObj;
-  },
- 
-  validateUser: function(email) {
-    // spoofing the DB response for simplicity
-    var dbUserObj = { // spoofing a userobject from the DB. 
-      name: 'arvind',
-      role: 'admin',
-      username: 'arvind@myapp.com'
-    };
- 
-    return dbUserObj;
-  },
+	login: function(req, res) {
+
+		var username = (req.body) ? req.body.username : req.query.username;
+		var password = (req.body) ? req.body.password : req.query.password;
+
+		if (username == '' || password == '') {
+			res.status(401);
+			res.json({
+				"status": 401,
+				"message": "Invalid credentials"
+			});
+		}
+		else{
+			auth.validate(username, password, function(dbUserObj){
+				if (dbUserObj) {
+					res.json(genToken(dbUserObj));
+				}
+				else{
+					res.status(401);
+					res.json({
+						"status": 401,
+						"message": "Invalid credentials"
+					});
+				}
+			});
+		}
+	},
+
+	validate: function(email, password, returnFunction) {
+		userdao.findByEmail(email, function(user){
+			if( user ){
+				if( user.password != password ){ // TODO: encrypt password
+					user = undefined;
+				}
+
+				if( user ){
+					delete user.password;
+				}
+			}
+			returnFunction(user);
+		});
+	},
+
+	validateUser: function(email, returnFunction) {
+		userdao.findByEmail(email, function(user){
+			if( user ){
+				delete user.password;
+			}
+			returnFunction(user);
+		});
+	},
+
+	validateRequest: function(req, res, next) {
+		var token = (req.body && req.body.access_token) || (req.query && req.query.access_token) || req.headers['x-access-token'];
+		//var key = (req.body && req.body.x_key) || (req.query && req.query.x_key) || req.headers['x-key'];
+
+		if (token) {
+			var decoded = undefined;
+			try{
+				decoded = jwt.decode(token, require('../config/secret.js')());
+			}
+			catch(err){
+				//console.log("Invalid token: " + token);
+			}
+			if (decoded){
+				if (decoded.exp <= Date.now()) {
+					res.status(400);
+					res.json({
+						"status": 400,
+						"message": "Token Expired"
+					});
+					return;
+				}
+
+				// Authorize the user to see if s/he can access our resources
+				auth.validateUser(decoded.email, function(dbUser){
+					if (dbUser) {
+						if ((req.url.indexOf('admin') >= 0 && dbUser.role == 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/') >= 0)) {
+							next();
+						}
+						else {
+							res.status(403);
+							res.json({
+								"status": 403,
+								"message": "Not Authorized"
+							});
+						}
+					}
+					else {
+						// No user with this name exists, respond back with a 401
+						res.status(401);
+						res.json({
+							"status": 401,
+							"message": "Invalid User"
+						});
+					}
+				});
+			}
+			else{
+				res.status(401);
+				res.json({
+					"status": 401,
+					"message": "Invalid Token"
+				});
+			}
+		}
+		else {
+			res.status(401);
+			res.json({
+				"status": 401,
+				"message": "Invalid Token"
+			});
+		}
+	}
 }
- 
-// private method
+
 function genToken(user) {
-  var expires = expiresIn(7); // 7 days
-  var token = jwt.encode({
-    exp: expires,
-    email: user.email
-  }, require('../config/secret')());
- 
-  return {
-    token: token,
-    expires: expires,
-    user: user
-  };
+	var expires = expiresIn(7); // 7 days
+	var decodedToken = {
+		exp: expires,
+		email: user.email
+	};
+	var token = jwt.encode(decodedToken, require('../config/secret')());
+
+	return {
+		token: token,
+		expires: expires,
+		user: user
+	};
 }
- 
+
 function expiresIn(numDays) {
-  var dateObj = new Date();
-  return dateObj.setDate(dateObj.getDate() + numDays);
+	var dateObj = new Date();
+	return dateObj.setDate(dateObj.getDate() + numDays);
 }
- 
+
 module.exports = auth;

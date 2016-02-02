@@ -1,3 +1,4 @@
+var _global = require('./global');
 var assert = require('assert');
 var userdao = require('../js/userdao');
 
@@ -109,5 +110,16 @@ describe('userdao', function(){
 			var user = {name: "User " + i, email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
 			userdao.insert(user,returnFunction);
 		}
+	});
+
+	it('findByEmail that exists', function(done){
+		var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+
+		userdao.insert(user, function (data) {
+			userdao.findByEmail( user.email, function (data){
+				assert.equal(data.name,user.name);
+				done();
+			} );
+		});
 	});
 })

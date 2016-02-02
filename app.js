@@ -36,7 +36,7 @@ app.all('/*', function(req, res, next) {
   }
 });
 
-app.all('/api/*', [require('./routes/validateRequest')]);
+app.all('/api/*', [require('./routes/auth').validateRequest]);
 
 app.use('/', require('./routes'));
 

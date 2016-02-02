@@ -9,6 +9,10 @@ var genericDao = {
 		doc = db.get(docName);
 	},
 
+	getDoc: function() {
+		return doc;
+	},
+
 	findAll: function(page,docsPerPage,returnFunction) {
 		var options = {};
 		if( page > 0 && docsPerPage > 0 ){
