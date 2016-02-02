@@ -4,9 +4,19 @@
 	<title>Express</title>
 	<link rel="stylesheet" href="/stylesheets/style.css">
 </head>
-<body>
+<body ng-app="app" ng-controller="indexController">
 	<h1>Express XXXX</h1>
 	<p>Welcome to Express</p>
-	<a href="users.html">Usuarios</a>
+	<div ng-show="isLogged">
+		<a href="users.html">Usuarios</a>
+		<a href="" ng-click="logout()">Logout</a>
+	</div>
+	<div ng-hide="isLogged">
+		<a href="login.html">Login</a>
+	</div>
+
+	<script type="text/javascript" src="javascripts/angular.1.4.9.min.js"></script>
+	<script type="text/javascript" src="controllers/angularapp.js"></script>
+	<script type="text/javascript" src="controllers/index.js"></script>
 </body>
 </html>
