@@ -1,4 +1,4 @@
-angularApp.controller('indexController', function($scope, restApi, loginService) {
+angularApp.controller('indexController', ['$scope', 'restApi', 'loginService', function($scope, restApi, loginService) {
 
 	$scope.isLogged = loginService.isLogged();
 
@@ -6,4 +6,4 @@ angularApp.controller('indexController', function($scope, restApi, loginService)
 		loginService.logout();
 	};
 
-});
+}]);

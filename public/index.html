@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app" ng-controller="indexController">
 <head>
 	<title>Express</title>
-	<link rel="stylesheet" href="/stylesheets/style.css">
+	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<script type="text/javascript" src="javascripts/angular.1.4.9.min.js"></script>
 </head>
-<body ng-app="app" ng-controller="indexController">
+<body>
 	<h1>Express XXXX</h1>
 	<p>Welcome to Express</p>
 	<div ng-show="isLogged">
@@ -13,9 +14,9 @@
 	</div>
 	<div ng-hide="isLogged">
 		<a href="login.html">Login</a>
+		<a href="createacc.html">Criar Conta</a>
 	</div>
 
-	<script type="text/javascript" src="javascripts/angular.1.4.9.min.js"></script>
 	<script type="text/javascript" src="controllers/angularapp.js"></script>
 	<script type="text/javascript" src="controllers/index.js"></script>
 </body>

@@ -1,6 +1,8 @@
-angularApp.controller('loginController', function($scope, $window, loginService) {
+angularApp.controller('loginController', ['$scope', '$window', 'loginService', function($scope, $window, loginService) {
 
 	$scope.user = {};
+	$scope.alertMessage = '';
+	$scope.showAlert = false;
 
 	$scope.isLogged = loginService.isLogged();
 
@@ -11,10 +13,11 @@ angularApp.controller('loginController', function($scope, $window, loginService)
 		};
 
 		var onError = function(response){
-			window.alert( "Erro: " + response.status + " - " + response.statusText );
+			$scope.showAlert = true;
+			$scope.alertMessage = response.data.message;
 		};
 
 		loginService.login( $scope.user.username, $scope.user.password, onSuccess, onError );
 	};
 
-});
+}]);
