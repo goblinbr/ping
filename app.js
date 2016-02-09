@@ -4,7 +4,9 @@ var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
-//var bodyParser = require('body-parser');
+var bodyParser = require('body-parser');
+
+require('./init').init(); // TODO: remove init to deploy app
 
 var app = express();
 
@@ -18,8 +20,8 @@ app.set('view engine', 'html');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-//app.use(bodyParser.json());
-//app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -67,10 +69,23 @@ app.use(function(req, res, next) {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
-  var errorStatus = (err.status) ? err.status : 500;
-  console.log( 'Path:' + req.path + '  Error: ' + errorStatus + ' - ' + err.stack );
-  res.status(errorStatus);
-  res.render('error/' + errorStatus + '.html');
+  if( err.status == 404 && req.path.endsWith(".map") ){
+    console.log( 'Path:' + req.path + '  Error: ' + err.status );
+  }
+  else{
+    var errorStatus = (err.status) ? err.status : 500;
+    console.log( 'Path:' + req.path + '  Error: ' + errorStatus + ' - ' + err.stack );
+    res.status(errorStatus);
+    if( err.message ){
+      res.json({
+        status: errorStatus,
+        message: err.message
+      });
+    }
+    else{
+      res.render('error/' + errorStatus + '.html');
+    }
+  }
 });
 
 

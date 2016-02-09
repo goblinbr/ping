@@ -3,7 +3,6 @@ var userdao = require('../js/userdao');
 
 var auth = {
 	login: function(req, res) {
-
 		var username = (req.body) ? req.body.username : req.query.username;
 		var password = (req.body) ? req.body.password : req.query.password;
 
@@ -26,6 +25,32 @@ var auth = {
 						"message": "Invalid credentials"
 					});
 				}
+			});
+		}
+	},
+
+	createAccount: function(req, res) {
+		var user = (req.body) ? req.body.user : undefined;
+
+		if (user) {
+			userdao.insert(user, function(dbUserObj){
+				if (dbUserObj) {
+					res.json(genToken(dbUserObj));
+				}
+				else{
+					res.status(401); // TODO: Verify status code
+					res.json({
+						"status": 401,
+						"message": "Invalid User"
+					});
+				}
+			});
+		}
+		else{
+			res.status(401); // TODO: Verify status code
+			res.json({
+				"status": 401,
+				"message": "Invalid User"
 			});
 		}
 	},
@@ -80,6 +105,7 @@ var auth = {
 				auth.validateUser(decoded.email, function(dbUser){
 					if (dbUser) {
 						if ((req.url.indexOf('admin') >= 0 && dbUser.role == 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/') >= 0)) {
+							req.user = dbUser;
 							next();
 						}
 						else {

@@ -4,8 +4,8 @@ var assert = require('assert');
 var auth = require('../routes/auth');
 var userdao = require('../js/userdao');
 
-describe('auth', function(){
-	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+describe('routes/auth', function(){
+	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
 	before(function(done){
 		userdao.removeAll(function () {
@@ -168,4 +168,57 @@ describe('auth', function(){
 
 		auth.login( loginRequest, loginResponse );
 	});
+
+
+	it('createAccount with valid user', function(done){
+		var validUser = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
+
+		var request = {
+			body: {
+				user: validUser
+			}
+		};
+		var statusCode = 0;
+		var response = {
+			status: function(st){
+				statusCode = st;
+			},
+
+			json: function(data){
+				assert.equal(data.user.name,validUser.name);
+				done();
+			}
+		};
+
+		auth.createAccount( request, response );
+	});
+
+	it('createAccount with invalid user', function(done){
+		var invalidUser = {};
+
+		var request = {
+			body: {
+				user: invalidUser
+			}
+		};
+		var statusCode = 0;
+		var response = {
+			status: function(st){
+				statusCode = st;
+			},
+
+			json: function(data){
+				assert.fail(data,'undefined','createAccount with invalid user should throw an error');
+				done();
+			}
+		};
+		try{
+			auth.createAccount( request, response );
+		}
+		catch(err){
+			assert.equal(err.status,500);
+			done();
+		}
+	});
+
 })

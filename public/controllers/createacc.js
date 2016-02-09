@@ -42,17 +42,23 @@ angularApp.controller('createaccController', ['$scope', '$window', '$interval', 
 	$scope.isLogged = loginService.isLogged();
 
 	$scope.createAccount = function() {
-		var onSuccess = function(data){
-			$scope.isLogged = loginService.isLogged();
-			$window.location.href = '/index.html';
-		};
-
-		var onError = function(response){
+		if( $scope.user.password != $scope.passwordConfirmation ){
 			$scope.showAlert = true;
-			$scope.alertMessage = response.data.message;
-		};
+			$scope.alertMessage = "Senha não confere!";
+		}
+		else{
+			var onSuccess = function(data){
+				$scope.isLogged = loginService.isLogged();
+				$window.location.href = '/index.html';
+			};
 
-		loginService.login( $scope.user.username, $scope.user.password, onSuccess, onError );
+			var onError = function(response){
+				$scope.showAlert = true;
+				$scope.alertMessage = response.data.message;
+			};
+
+			loginService.createAccount( $scope.user, onSuccess, onError );
+		}
 	};
 
 }]);

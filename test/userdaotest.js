@@ -3,8 +3,12 @@ var assert = require('assert');
 var userdao = require('../js/userdao');
 
 
-describe('userdao', function(){
+describe('js/userdao', function(){
+	var defaultUser = {};
+
 	beforeEach(function(done){
+		defaultUser = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
+
 		userdao.removeAll(function () {
 			done();
 		});
@@ -18,7 +22,7 @@ describe('userdao', function(){
 	});
 
 	it('insert', function(done){
-		var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+		var user = defaultUser;
 
 		userdao.insert(user, function (data) {
 			assert.equal(data.name,user.name);
@@ -27,7 +31,7 @@ describe('userdao', function(){
 	});
 
 	it('findById that exists', function(done){
-		var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+		var user = defaultUser;
 
 		userdao.insert(user, function (data) {
 			userdao.findById( data._id, function (data){
@@ -45,7 +49,7 @@ describe('userdao', function(){
 	});
 
 	it('remove', function(done){
-		var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+		var user = defaultUser;
 		userdao.insert(user, function (data) {
 			var id = data._id;
 			userdao.remove( id, function (data) {
@@ -58,7 +62,7 @@ describe('userdao', function(){
 	});
 
 	it('update', function(done){
-		var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+		var user = defaultUser;
 		userdao.insert(user, function (data) {
 			user = data;
 			var id = data._id;
@@ -88,7 +92,9 @@ describe('userdao', function(){
 		};
 
 		for( var i = 1; i <= totalDocs; i++ ){
-			var user = {name: "User " + i, email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+			var user = defaultUser;
+			user.name = "User " + i;
+			delete user._id;
 			userdao.insert(user,returnFunction);
 		}
 	});
@@ -107,13 +113,15 @@ describe('userdao', function(){
 		};
 
 		for( var i = 1; i <= totalDocs; i++ ){
-			var user = {name: "User " + i, email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+			var user = defaultUser;
+			user.name = "User " + i;
+			delete user._id;
 			userdao.insert(user,returnFunction);
 		}
 	});
 
 	it('findByEmail that exists', function(done){
-		var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "", active: "Y", timezone: "-3", token: "ABC-0123-ASDASD"};
+		var user = defaultUser;
 
 		userdao.insert(user, function (data) {
 			userdao.findByEmail( user.email, function (data){

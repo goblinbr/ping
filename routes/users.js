@@ -1,6 +1,5 @@
 var userdao = require('../js/userdao');
 
-var users = require('./crudrouter.js');
-users.setDao(userdao);
+var users = require('./crudrouter.js').newRouter(userdao);
  
 module.exports = users;
