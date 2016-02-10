@@ -50,20 +50,22 @@ describe('routes/hosts', function(){
 
 		var statusCode = 0;
 
+		var date = new Date();
+
 		var response = {
 			status: function(st){
 				statusCode = st;
 			},
 
 			json: function(data){
-				var date = new Date();
-				date.setDate( date.getDate() + GLOBAL.FREE_DAYS_FOR_NEW_HOSTS );
-				assert.equal(data.paidUntil,date);
+				assert.equal(data.paidUntil.getDate(),date.getDate());
+				assert.equal(data.paidUntil.getMonth(),date.getMonth());
+				assert.equal(data.paidUntil.getFullYear(),date.getFullYear());
 				done();
 			}
 		};
 
-
+		date.setDate( date.getDate() + GLOBAL.FREE_DAYS_FOR_NEW_HOSTS );
 		hosts.insert( request, response );
 	});
 
@@ -146,6 +148,30 @@ describe('routes/hosts', function(){
 
 			json: function(data){
 				assert.equal(data.name,host.name);
+				done();
+			}
+		};
+
+		hosts.insert( request, response );
+	});
+
+	it('insert without user', function(done){
+		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C'};
+
+		var request = {
+			user: user,
+			body: host
+		};
+
+		var statusCode = 0;
+
+		var response = {
+			status: function(st){
+				statusCode = st;
+			},
+
+			json: function(data){
+				assert.equal(data.userId,user._id);
 				done();
 			}
 		};

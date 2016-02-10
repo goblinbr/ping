@@ -43,7 +43,7 @@ var genericDao = {
 				var msg = dao.validate(document, true);
 				if( msg && msg != "" ){
 					var err = new Error(msg);
-					err.status = 500;
+					err.status = 400;
 					throw err;
 				}
 				doc.insert( document, function(err, data){
@@ -77,7 +77,7 @@ var genericDao = {
 				var msg = dao.validate(document, false);
 				if( msg && msg != "" ){
 					var err = new Error(msg);
-					err.status = 500;
+					err.status = 400;
 					throw err;
 				}
 				doc.update( { _id: document._id }, document , function(err, data){

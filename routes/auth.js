@@ -38,19 +38,19 @@ var auth = {
 					res.json(genToken(dbUserObj));
 				}
 				else{
-					res.status(401); // TODO: Verify status code
+					res.status(400);
 					res.json({
-						"status": 401,
-						"message": "Invalid User"
+						"status": 400,
+						"message": "Não foi possível criar usuário"
 					});
 				}
 			});
 		}
 		else{
-			res.status(401); // TODO: Verify status code
+			res.status(400);
 			res.json({
-				"status": 401,
-				"message": "Invalid User"
+				"status": 400,
+				"message": "Atributo user não está presente no corpo da mensagem"
 			});
 		}
 	},

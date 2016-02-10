@@ -6,7 +6,7 @@ dao.insert = function(document, returnFunction) {
 	var date = new Date();
 	date.setDate(date.getDate() + GLOBAL.FREE_DAYS_FOR_NEW_HOSTS);
 
-	document.paidUntil = date; // TODO: get only date, the time doesnt matter
+	document.paidUntil = date;
 	superInsert(document,returnFunction);
 },
 
