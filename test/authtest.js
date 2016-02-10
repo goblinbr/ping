@@ -216,7 +216,7 @@ describe('routes/auth', function(){
 			auth.createAccount( request, response );
 		}
 		catch(err){
-			assert.equal(err.status,500);
+			assert.equal(err.status,400);
 			done();
 		}
 	});
