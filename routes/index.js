@@ -17,6 +17,7 @@ router.post('/createacc', auth.createAccount);
  */
 router.get( '/api/hosts/', hosts.findAllByUser);
 router.post('/api/hosts/', hosts.insert);
+router.put( '/api/hosts/', hosts.update);
 //router.get('/api/hosts/:id', hosts.find);
 //router.post('/api/hosts/', hosts.insert);
 //router.put('/api/hosts/', hosts.update);

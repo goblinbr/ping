@@ -41,7 +41,7 @@ describe('routes/hosts', function(){
 	});
 
 	it('paidUntil on insert', function(done){
-		var host = {name: "Google", hostname: "www.google.com", port: 80, command: 'C', userId: user._id};
+		var host = {name: "Google", hostname: "www.google.com", port: 80, command: 'C', userId: user._id.toString()};
 
 		var request = {
 			user: user,
@@ -70,8 +70,8 @@ describe('routes/hosts', function(){
 	});
 
 	it('findAllByUser with 2 hosts', function(done){
-		var hostFromUserOne = {name: "Google", hostname: "www.google.com", port: 80, command: 'C', userId: user._id};
-		var hostFromUserTwo = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id};
+		var hostFromUserOne = {name: "Google", hostname: "www.google.com", port: 80, command: 'C', userId: user._id.toString()};
+		var hostFromUserTwo = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
 		var hostFromAnotherUser = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: '0'};
 
 		var request = {
@@ -132,7 +132,7 @@ describe('routes/hosts', function(){
 	});
 
 	it('insert with valid user', function(done){
-		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id};
+		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
 
 		var request = {
 			user: user,
@@ -171,12 +171,74 @@ describe('routes/hosts', function(){
 			},
 
 			json: function(data){
-				assert.equal(data.userId,user._id);
+				assert.equal(data.userId,user._id.toString());
 				done();
 			}
 		};
 
 		hosts.insert( request, response );
+	});
+
+	it('update with invalid user', function(done){
+		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
+
+		hostdao.insert( host, function(data){
+			data.userId = '123';
+
+			var request = {
+				user: user,
+				body: data
+			};
+
+			var statusCode = 0;
+
+			var response = {
+				status: function(st){
+					statusCode = st;
+				},
+
+				json: function(data){
+					assert.fail(data,'undefined','should throw an error');
+					done();
+				}
+			};
+
+			try{
+				hosts.update( request, response );
+			}
+			catch(err){
+				assert.equal(err.status,400)
+				done();
+			}
+		} );
+	});
+
+	it('update with valid user', function(done){
+		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
+
+		hostdao.insert( host, function(data){
+			data.userId = user._id.toString();
+
+			var request = {
+				user: user,
+				body: data
+			};
+
+			var statusCode = 0;
+
+			var response = {
+				status: function(st){
+					statusCode = st;
+				},
+
+				json: function(data){
+					assert.equal( data, 1 );
+					done();
+				}
+			};
+
+			hosts.update( request, response );
+		} );
 	});
 
 })

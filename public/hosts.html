@@ -11,17 +11,9 @@
 		
 
 	<div class="container">
-		<div ng-show="loginService.isLogged()">
-			<p>{{hosts}}</p>
-			<ul class="nav nav-pills nav-stacked">
-				<li role="presentation"><a href="" ng-click="addHost()">Adicionar Host</a></li>
-				<li role="presentation"><a href="index.html">Inicio</a></li>
-				<li role="presentation"><a href="" ng-click="loginService.logout()">Logout</a></li>
-			</ul>
-		</div>
-		<div ng-show="isAddingHost">
+		<div ng-show="isEditingHost">
 			<form class="form-max-width" ng-submit="createHost()">
-				<h2>Adicionar Host</h2>
+				<h2>{{editTitle}}</h2>
 				<div class="form-group">
 					<label for="inputName">Nome:</label>
 					<input type="text" id="inputName" class="form-control" placeholder="Nome" required autofocus ng-model="host.name">
@@ -45,8 +37,37 @@
 					{{alertMessage}}
 				</div>
 
-				<button class="btn btn-lg btn-primary btn-block" type="submit">Adicionar</button>
+				<button class="btn btn-lg btn-primary btn-block" type="submit">{{submitButtonText}}</button>
+				<button class="btn btn-lg btn-block" type="button" ng-click="cancel()">Cancelar</button>
 			</form>
+		</div>
+		<div ng-show="loginService.isLogged() && !isEditingHost">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Alterar</th>
+						<th>Nome</th>
+						<th>Endereço/IP</th>
+						<th>Porta</th>
+						<th>Comando</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr ng-repeat="item in hosts">
+						<td><button class="btn btn-sm" ng-click="editHost(item)"><span class="glyphicon glyphicon-pencil"></span></button></td>
+						<td>{{item.name}}</td>
+						<td>{{item.hostname}}</td>
+						<td>{{item.port}}</td>
+						<td>{{availableCommands[item.command]}}</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<ul class="nav nav-pills nav-stacked">
+				<li role="presentation"><a href="" ng-click="addHost()">Incluir Host</a></li>
+				<li role="presentation"><a href="index.html">Inicio</a></li>
+				<li role="presentation"><a href="" ng-click="loginService.logout()">Logout</a></li>
+			</ul>
 		</div>
 	</div>
 

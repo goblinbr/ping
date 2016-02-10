@@ -19,16 +19,25 @@ angularApp.controller('hostsController', ['$scope', 'restApi', 'loginService', f
 	$scope.addHost = function() {
 		$scope.host = {
 			port: 80,
-			command: 'C',
-			userId: loginService.getUserId()
+			command: 'C'
 		};
 		$scope.showAlert = false;
-		$scope.isAddingHost = true;
+		$scope.editTitle = "Incluir Host";
+		$scope.submitButtonText = "Incluir";
+		$scope.isEditingHost = true;
+	}
+
+	$scope.editHost = function(item){
+		$scope.host = angular.copy(item);
+		$scope.showAlert = false;
+		$scope.editTitle = "Alterar Host";
+		$scope.submitButtonText = "Alterar";
+		$scope.isEditingHost = true;
 	}
 
 	$scope.createHost = function() {
 		var onSucess = function(data){
-			$scope.isAddingHost = false;
+			$scope.isEditingHost = false;
 			$scope.refreshHosts();
 		};
 
@@ -37,11 +46,19 @@ angularApp.controller('hostsController', ['$scope', 'restApi', 'loginService', f
 			$scope.alertMessage = data.message;
 		};
 
-		restApi.post( '/hosts', $scope.host, onSucess, onError );
+		if( $scope.host.command == 'P' ){
+			$scope.host.port = 0;
+		}
+		if( $scope.host._id ){
+			restApi.put( '/hosts', $scope.host, onSucess, onError );
+		}
+		else{
+			restApi.post( '/hosts', $scope.host, onSucess, onError );
+		}
 	}
 
 	$scope.cancel = function() {
-		$scope.isAddingHost = false;
+		$scope.isEditingHost = false;
 	}
 
 	$scope.refreshHosts();

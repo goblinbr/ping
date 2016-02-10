@@ -29,7 +29,7 @@ var crudRouter = {
 
 			update: function(req, res) {
 				var updateDocument = req.body;
-				dao.insert(updateDocument, function(data){
+				dao.update(updateDocument, function(data){
 					res.json(data);
 				});
 			},

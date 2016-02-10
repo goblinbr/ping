@@ -135,6 +135,10 @@ angularApp.factory('restApi', ['$http', 'loginService', function($http, loginSer
 
 		post: function(url, body, successCallback, errorCallback){
 			$http.post('/api' + url, body, config).then(apiOnSuccess(successCallback), apiOnError(errorCallback));
+		},
+
+		put: function(url, body, successCallback, errorCallback){
+			$http.put('/api' + url, body, config).then(apiOnSuccess(successCallback), apiOnError(errorCallback));
 		}
 	};
 
