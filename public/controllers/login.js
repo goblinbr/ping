@@ -6,6 +6,8 @@ angularApp.controller('loginController', ['$scope', '$window', 'loginService', f
 
 	$scope.isLogged = loginService.isLogged();
 
+	$scope.stayLoggedIn = false;
+
 	$scope.login = function() {
 		var onSuccess = function(data){
 			$scope.isLogged = loginService.isLogged();
@@ -17,7 +19,7 @@ angularApp.controller('loginController', ['$scope', '$window', 'loginService', f
 			$scope.alertMessage = response.data.message;
 		};
 
-		loginService.login( $scope.user.username, $scope.user.password, onSuccess, onError );
+		loginService.login( $scope.user.username, $scope.user.password, $scope.stayLoggedIn, onSuccess, onError );
 	};
 
 }]);

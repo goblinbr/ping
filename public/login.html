@@ -17,7 +17,7 @@
 			<input type="password" id="inputPassword" class="form-control" placeholder="Senha" required ng-model="user.password">
 			<div class="checkbox">
 				<label>
-					<input type="checkbox" value="remember-me">Continuar logado
+					<input type="checkbox" ng-model="stayLoggedIn">Continuar logado
 				</label>
 			</div>
 			<div class="alert alert-danger" role="alert" ng-show="showAlert">

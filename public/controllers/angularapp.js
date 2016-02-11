@@ -1,12 +1,43 @@
-var angularApp = angular.module('app', []);
+var angularApp = angular.module('app', ['ngCookies']);
 
-angularApp.factory('loginService', ['$http', '$window', function($http, $window) {
-	var storageSession = function(data){
+angularApp.factory('loginService', ['$http', '$window', '$cookies', function($http, $window, $cookies) {
+	var storageSession = function(data, stayLoggedIn){
 		$window.sessionStorage.userId = data.user._id;
 		$window.sessionStorage.userName = data.user.name;
 		$window.sessionStorage.userEmail = data.user.email;
 		$window.sessionStorage.token = data.token;
+
+		if(stayLoggedIn){
+			var expireDate = new Date();
+			expireDate.setDate( expireDate.getDate() + 365 );
+
+			var cookieConfig = {
+				expires: expireDate
+			};
+
+			$cookies.put('token', $window.sessionStorage.token, cookieConfig);
+			$cookies.put('userId', $window.sessionStorage.userId, cookieConfig);
+			$cookies.put('userName', $window.sessionStorage.userName, cookieConfig);
+			$cookies.put('userEmail', $window.sessionStorage.userEmail, cookieConfig);
+		}
+		else{
+			$cookies.remove('token');
+			$cookies.remove('userId');
+			$cookies.remove('userName');
+			$cookies.remove('userEmail');
+		}
 	};
+
+	var cookieToken = $cookies.get('token');
+	var cookieUserId = $cookies.get('userId');
+	var cookieUserName = $cookies.get('userName');
+	var cookieUserEmail = $cookies.get('userEmail');
+	if( cookieToken && cookieUserId && cookieUserName && cookieUserEmail ){
+		$window.sessionStorage.userId = cookieUserId;
+		$window.sessionStorage.userName = cookieUserName;
+		$window.sessionStorage.userEmail = cookieUserEmail;
+		$window.sessionStorage.token = cookieToken;
+	}
 
 	var loginService = {
 		isLogged: function(){
@@ -29,9 +60,9 @@ angularApp.factory('loginService', ['$http', '$window', function($http, $window)
 			return $window.sessionStorage.userEmail;
 		},
 
-		login: function(username,password,successCallback,errorCallback){
+		login: function(username, password, stayLoggedIn, successCallback, errorCallback){
 			var onSuccess = function(response){
-				storageSession(response.data);
+				storageSession(response.data, stayLoggedIn);
 				if(successCallback){
 					successCallback(response.data);
 				}
@@ -57,6 +88,11 @@ angularApp.factory('loginService', ['$http', '$window', function($http, $window)
 			delete $window.sessionStorage.userName;
 			delete $window.sessionStorage.userEmail;
 
+			$cookies.remove('token');
+			$cookies.remove('userId');
+			$cookies.remove('userName');
+			$cookies.remove('userEmail');
+
 			$window.location.href = '/index.html';
 		},
 
@@ -70,7 +106,7 @@ angularApp.factory('loginService', ['$http', '$window', function($http, $window)
 
 		createAccount: function(user,successCallback,errorCallback){
 			var onSuccess = function(response){
-				storageSession(response.data);
+				storageSession(response.data, false);
 
 				if(successCallback){					
 					successCallback(response.data);
