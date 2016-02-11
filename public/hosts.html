@@ -2,14 +2,13 @@
 <html ng-app="app" ng-controller="hostsController">
 <head>
 	<title>Express</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/css/style.css">
 	<script type="text/javascript" src="javascripts/angular.1.4.9.min.js"></script>
 </head>
 <body>
-
-		
-
 	<div class="container">
 		<div ng-show="isEditingHost">
 			<form class="form-max-width" ng-submit="createHost()">
@@ -19,8 +18,8 @@
 					<input type="text" id="inputName" class="form-control" placeholder="Nome" required autofocus ng-model="host.name">
 				</div>
 				<div class="form-group">
-					<label for="inputHostname">Hostname/IP:</label>
-					<input type="text" id="inputHostname" class="form-control" placeholder="Hostname/IP" required autofocus ng-model="host.hostname">
+					<label for="inputHostname">Endereço/IP:</label>
+					<input type="text" id="inputHostname" class="form-control" placeholder="Endereço/IP" required autofocus ng-model="host.hostname">
 				</div>
 				<div class="form-group" ng-show="host.command == 'C'">
 					<label for="inputPorta">Porta:</label>
@@ -42,7 +41,9 @@
 			</form>
 		</div>
 		<div ng-show="loginService.isLogged() && !isEditingHost">
-			<table class="table">
+			<h1>Hosts</h1>
+			<button class="btn btn-default margin-bottom-10" ng-click="addHost(item)"><i class="fa fa-plus-square"></i> Incluir</button>
+			<table class="table table-hover table-responsive">
 				<thead>
 					<tr>
 						<th>Alterar</th>
@@ -50,27 +51,29 @@
 						<th>Endereço/IP</th>
 						<th>Porta</th>
 						<th>Comando</th>
+						<th>Ativo até</th>
 					</tr>
 				</thead>
 				<tbody>
-					<tr ng-repeat="item in hosts">
-						<td><button class="btn btn-sm" ng-click="editHost(item)"><span class="glyphicon glyphicon-pencil"></span></button></td>
+					<tr class="{{getHostClass(item)}}" ng-repeat="item in hosts">
+						<td><button class="btn btn-xs btn-default opaque-background" ng-click="editHost(item)"><i class="fa fa-pencil"></i></button></td>
 						<td>{{item.name}}</td>
 						<td>{{item.hostname}}</td>
 						<td>{{item.port}}</td>
 						<td>{{availableCommands[item.command]}}</td>
+						<td>{{moment(item.paidUntil).format('DD/MM/YYYY')}}</td>
 					</tr>
 				</tbody>
 			</table>
 
-			<ul class="nav nav-pills nav-stacked">
-				<li role="presentation"><a href="" ng-click="addHost()">Incluir Host</a></li>
+			<ul class="nav nav-pills">
 				<li role="presentation"><a href="index.html">Inicio</a></li>
 				<li role="presentation"><a href="" ng-click="loginService.logout()">Logout</a></li>
 			</ul>
 		</div>
 	</div>
 
+	<script type="text/javascript" src="javascripts/moment.min.js"></script>
 	<script type="text/javascript" src="controllers/angularapp.js"></script>
 	<script type="text/javascript" src="controllers/hosts.js"></script>
 </body>

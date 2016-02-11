@@ -60,6 +60,14 @@ angularApp.factory('loginService', ['$http', '$window', function($http, $window)
 			$window.location.href = '/index.html';
 		},
 
+		verifyLoggedIn: function(){
+			if(!loginService.isLogged()){
+				$window.location.href = '/index.html';
+				return false;
+			}
+			return true;
+		},
+
 		createAccount: function(user,successCallback,errorCallback){
 			var onSuccess = function(response){
 				storageSession(response.data);

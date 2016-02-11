@@ -4,6 +4,11 @@ angularApp.controller('hostsController', ['$scope', 'restApi', 'loginService', f
 	$scope.host = {};
 
 	$scope.loginService = loginService;
+	if( !$scope.loginService.verifyLoggedIn() ){
+		return;
+	}
+
+	$scope.moment = moment;
 
 	$scope.availableCommands = {
 		C: 'Conectar',
@@ -59,6 +64,17 @@ angularApp.controller('hostsController', ['$scope', 'restApi', 'loginService', f
 
 	$scope.cancel = function() {
 		$scope.isEditingHost = false;
+	}
+
+	$scope.getHostClass = function(item){
+		var datePaidUntil = new Date(item.paidUntil);
+		var dateNow = new Date();
+		var dateTomorrow = new Date( dateNow.getFullYear(), dateNow.getMonth(), dateNow.getDate() + 1 );
+		
+		if( datePaidUntil < dateTomorrow ){
+			return "danger";
+		}
+		return "success";
 	}
 
 	$scope.refreshHosts();

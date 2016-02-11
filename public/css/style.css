@@ -4,3 +4,25 @@
 	margin: 0 auto;
 	margin-top: 15px;
 }
+
+.inverse {
+	background: #666666;
+	color: #FFFFFF;
+}
+
+.inverse.focus, .inverse:focus, .inverse:hover {
+	background: #999999;
+	color: #FFFFFF;
+}
+
+.margin-bottom-10 {
+	margin-bottom: 10px !important;
+}
+
+.opaque-background {
+	background-color: rgba(255, 255, 255, 0);
+}
+
+button.opaque-background:hover{
+	background-color: rgba(255, 255, 255, 0.5);
+}
