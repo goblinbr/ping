@@ -241,4 +241,28 @@ describe('routes/hosts', function(){
 		} );
 	});
 
+	it('insert with valid hostname', function(done){
+		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
+
+		var request = {
+			user: user,
+			body: host
+		};
+
+		var statusCode = 0;
+
+		var response = {
+			status: function(st){
+				statusCode = st;
+			},
+
+			json: function(data){
+				assert.equal(data.name,host.name);
+				done();
+			}
+		};
+
+		hosts.insert( request, response );
+	});
+
 })
