@@ -15,86 +15,54 @@ var genericDao = {
 				return doc;
 			},
 
-			findAll: function(page,docsPerPage,returnFunction) {
+			findAll: function(page,docsPerPage,next) {
 				var options = {};
 				if( page > 0 && docsPerPage > 0 ){
 					options.limit = docsPerPage;
 					options.skip = (page - 1) * docsPerPage;
 				}
 
-				doc.find({}, options, function(err, data){
-					if (err) throw err;
-					if( returnFunction ){
-						returnFunction(data);
-					}
-				});
+				doc.find({}, options, next);
 			},
 
-			removeAll: function(returnFunction) {
-				doc.remove( {}, function(err, data){
-					if (err) throw err;
-					if( returnFunction ){
-						returnFunction(data);
-					}
-				});
+			deleteAll: function(next) {
+				doc.remove( {}, next);
 			},
 
-			insert: function(document, returnFunction) {
+			insert: function(document, next) {
 				var msg = dao.validate(document, true);
 				if( msg && msg != "" ){
 					var err = new Error(msg);
 					err.status = 400;
-					throw err;
+					next(err);
 				}
-				doc.insert( document, function(err, data){
-					if (err) throw err;
-					if( returnFunction ){
-						returnFunction(data);
-					}
-				});
+				else{
+					doc.insert( document, next);
+				}
 			},
 
-			findById: function(id, returnFunction){
-				doc.find({_id: id}, function(err, data, a, b){
-					if (err) throw err;
-					if( returnFunction ){
-						returnFunction(data[0]);
-					}
-				});
+			findById: function(id, next){
+				doc.findOne({_id: id}, next);
 			},
 
-			remove: function(id, returnFunction){
-				doc.remove({_id: id}, function(err, data, a, b){
-					if (err) 
-						throw err;
-					if( returnFunction ){
-						returnFunction(data[0]);
-					}
-				});
+			delete: function(id, next){
+				doc.remove({_id: id}, next);
 			},
 
-			update: function(document, returnFunction) {
+			update: function(document, next) {
 				var msg = dao.validate(document, false);
 				if( msg && msg != "" ){
 					var err = new Error(msg);
 					err.status = 400;
-					throw err;
+					next(err);
 				}
-				doc.update( { _id: document._id }, document , function(err, data){
-					if (err) throw err;
-					if( returnFunction ){
-						returnFunction(data);
-					}
-				});
+				else{
+					doc.update( { _id: document._id }, document , next);
+				}
 			},
 
-			count: function(returnFunction) {
-				doc.count( {}, function(err, data){
-					if (err) throw err;
-					if( returnFunction ){
-						returnFunction(data);
-					}
-				});
+			count: function(next) {
+				doc.count( {}, next);
 			},
 
 			validate: function(document,isInsert){

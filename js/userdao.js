@@ -1,11 +1,8 @@
 var dao = require('./genericdao').newDao('user');
 
-dao.findByEmail = function (email, returnFunction) {
+dao.findByEmail = function (email, next) {
 	var doc = dao.getDoc();
-	doc.find({email: email}, function(err, data, a, b){
-		if (err) throw err;
-		returnFunction(data[0]);
-	});
+	doc.findOne({email: email}, next);
 };
 
 var superValidate = dao.validate;

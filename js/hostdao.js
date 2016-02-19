@@ -2,20 +2,17 @@ var dao = require('./genericdao').newDao('host');
 
 var superInsert = dao.insert;
 
-dao.insert = function(document, returnFunction) {
+dao.insert = function(document, next) {
 	var date = new Date();
 	date.setDate(date.getDate() + GLOBAL.FREE_DAYS_FOR_NEW_HOSTS);
 
 	document.paidUntil = date;
-	superInsert(document,returnFunction);
+	superInsert(document,next);
 },
 
-dao.findAllByUser = function(userId, returnFunction) {
+dao.findAllByUser = function(userId, next) {
 	var doc = dao.getDoc();
-	doc.find({userId: userId}, function(err, data, a, b){
-		if (err) throw err;
-		returnFunction(data);
-	});
+	doc.find({userId: userId}, next);
 };
 
 var superValidate = dao.validate;

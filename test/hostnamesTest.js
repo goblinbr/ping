@@ -8,15 +8,15 @@ describe('test hostnames and ips', function(){
 	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
 	beforeEach(function(done){
-		userdao.removeAll(function () {
-			userdao.insert( user, function(data){
+		userdao.deleteAll(function () {
+			userdao.insert( user, function(err,data){
 				user = data;
-				hostdao.removeAll(function () {
+				hostdao.deleteAll(function () {
 					done();
 				});
 			} );
 		});
-	})
+	});
 
 	it('insert', function(done){
 		var hostnames = [
@@ -550,29 +550,25 @@ describe('test hostnames and ips', function(){
 			var host = {name: "Test", hostname: hostname, port: 80, command: 'C', userId: user._id.toString()};
 			
 			var retFun = function(pShouldBeValid,pHostname) {
-				return function(data){
-					totalTests++;
-					if( !pShouldBeValid ){
-						assert.fail(data.hostname,pHostname,'hostname "' + data.hostname + '"" should throw an error');
+				return function(error,data){
+					if( error ){
+						if(pShouldBeValid){
+							assert.fail(undefined,pHostname,'hostname "' + pHostname + '"" should be valid');
+						}
 					}
+					else{
+						if( !pShouldBeValid ){
+							assert.fail(data.hostname,undefined,'hostname "' + data.hostname + '"" should be invalid');
+						}
+					}
+					totalTests++;
 					if(totalTests == hostnames.length){
 						done();
 					}
 				};
 			};
 
-			try{
-				hostdao.insert(host, retFun(shouldBeValid,hostname));
-			}
-			catch(err){
-				totalTests++;
-				if(shouldBeValid){
-					assert.fail('undefined', host.hostname,'hostname "' + host.hostname + '"" should be valid');
-				}
-				if(totalTests == hostnames.length){
-					done();
-				}
-			}
+			hostdao.insert(host, retFun(shouldBeValid,hostname));
 		}
 	});
 })

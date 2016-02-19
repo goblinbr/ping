@@ -9,10 +9,10 @@ describe('routes/hosts', function(){
 	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
 	beforeEach(function(done){
-		userdao.removeAll(function () {
-			userdao.insert( user, function(data){
+		userdao.deleteAll(function () {
+			userdao.insert( user, function(err, data){
 				user = data;
-				hostdao.removeAll(function () {
+				hostdao.deleteAll(function () {
 					done();
 				});
 			} );
@@ -117,18 +117,12 @@ describe('routes/hosts', function(){
 			},
 
 			json: function(data){
-				assert.fail(data,'undefined','should throw an error');
+				assert.equal(statusCode,400);
 				done();
 			}
 		};
 
-		try{
-			hosts.insert( request, response );
-		}
-		catch(err){
-			assert.equal(err.status, 400);
-			done();
-		}
+		hosts.insert( request, response );
 	});
 
 	it('insert with valid user', function(done){
@@ -182,7 +176,7 @@ describe('routes/hosts', function(){
 	it('update with invalid user', function(done){
 		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
 
-		hostdao.insert( host, function(data){
+		hostdao.insert( host, function(err,data){
 			data.userId = '123';
 
 			var request = {
@@ -198,25 +192,19 @@ describe('routes/hosts', function(){
 				},
 
 				json: function(data){
-					assert.fail(data,'undefined','should throw an error');
+					assert.equal(statusCode,400);
 					done();
 				}
 			};
 
-			try{
-				hosts.update( request, response );
-			}
-			catch(err){
-				assert.equal(err.status,400)
-				done();
-			}
+			hosts.update( request, response );
 		} );
 	});
 
 	it('update with valid user', function(done){
 		var host = {name: "Amazon", hostname: "www.amazon.com", port: 80, command: 'C', userId: user._id.toString()};
 
-		hostdao.insert( host, function(data){
+		hostdao.insert( host, function(err, data){
 			data.userId = user._id.toString();
 
 			var request = {

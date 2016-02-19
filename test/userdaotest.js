@@ -9,14 +9,19 @@ describe('js/userdao', function(){
 	beforeEach(function(done){
 		defaultUser = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
-		userdao.removeAll(function () {
+		userdao.deleteAll(function () {
 			done();
 		});
 	})
 
 	it('findAll with empty collection', function(done){
-		userdao.findAll(0, 0, function (data) {
-			assert.equal(data.length,0);
+		userdao.findAll(0, 0, function (err, data) {
+			if( err ){
+				assert.fail(err,undefined,'should not return an error');
+			}
+			else{
+				assert.equal(data.length,0);
+			}
 			done();
 		});
 	});
@@ -24,8 +29,13 @@ describe('js/userdao', function(){
 	it('insert', function(done){
 		var user = defaultUser;
 
-		userdao.insert(user, function (data) {
-			assert.equal(data.name,user.name);
+		userdao.insert(user, function (err, data) {
+			if( err ){
+				assert.fail(err,undefined,'should not return an error');
+			}
+			else{
+				assert.equal(data.name,user.name);
+			}
 			done();
 		});
 	});
@@ -33,28 +43,43 @@ describe('js/userdao', function(){
 	it('findById that exists', function(done){
 		var user = defaultUser;
 
-		userdao.insert(user, function (data) {
-			userdao.findById( data._id, function (data){
-				assert.equal(data.name,user.name);
+		userdao.insert(user, function (err, data) {
+			userdao.findById( data._id, function (err, data){
+				if( err ){
+					assert.fail(err,undefined,'should not return an error');
+				}
+				else{
+					assert.equal(data.name,user.name);
+				}
 				done();
 			} );
 		});
 	});
 
 	it('findById that doesnt exist', function(done){
-		userdao.findById( 1, function (data){
-			assert.equal(data,undefined);
+		userdao.findById( 1, function (err,data){
+			if( err ){
+				assert.fail(err,undefined,'should not return an error');
+			}
+			else{
+				assert.equal(data,undefined);
+			}
 			done();
 		} );
 	});
 
-	it('remove', function(done){
+	it('delete', function(done){
 		var user = defaultUser;
-		userdao.insert(user, function (data) {
+		userdao.insert(user, function (err, data) {
 			var id = data._id;
-			userdao.remove( id, function (data) {
-				userdao.findById( id, function (data){
-					assert.equal(data,undefined);
+			userdao.delete( id, function (err, data) {
+				userdao.findById( id, function (err, data){
+					if( err ){
+						assert.fail(err,undefined,'should not return an error');
+					}
+					else{
+						assert.equal(data,undefined);
+					}
 					done();
 				});
 			});
@@ -63,15 +88,20 @@ describe('js/userdao', function(){
 
 	it('update', function(done){
 		var user = defaultUser;
-		userdao.insert(user, function (data) {
+		userdao.insert(user, function (err,data) {
 			user = data;
 			var id = data._id;
 
 			user.name = "Not Rodrigo";
 
-			userdao.update( user, function (data) {
-				userdao.findById( id, function (data){
-					assert.equal(data.name,"Not Rodrigo");
+			userdao.update( user, function (err,data) {
+				userdao.findById( id, function (err, data){
+					if( err ){
+						assert.fail(err,undefined,'should not return an error');
+					}
+					else{
+						assert.equal(data.name,"Not Rodrigo");
+					}
 					done();
 				});
 			});
@@ -81,11 +111,16 @@ describe('js/userdao', function(){
 	it('findAll At page 2 with 5 documents each page with a total of 7 documents', function(done){
 		var insertCount = 0;
 		var totalDocs = 7;
-		var returnFunction = function(data){
+		var returnFunction = function(err, data){
 			insertCount++;
 			if( insertCount == totalDocs ){
-				userdao.findAll(2, 5, function (data) {
-					assert.equal(data.length,2);
+				userdao.findAll(2, 5, function (err, data) {
+					if( err ){
+						assert.fail(err,undefined,'should not return an error');
+					}
+					else{
+						assert.equal(data.length,2);
+					}
 					done();
 				});
 			}
@@ -102,11 +137,16 @@ describe('js/userdao', function(){
 	it('count 7 documents', function(done){
 		var insertCount = 0;
 		var totalDocs = 7;
-		var returnFunction = function(data){
+		var returnFunction = function(err, data){
 			insertCount++;
 			if( insertCount == totalDocs ){
-				userdao.count(function(data){
-					assert.equal(data,totalDocs);
+				userdao.count(function(err,data){
+					if( err ){
+						assert.fail(err,undefined,'should not return an error');
+					}
+					else{
+						assert.equal(data,totalDocs);
+					}
 					done();
 				});
 			}
@@ -123,9 +163,14 @@ describe('js/userdao', function(){
 	it('findByEmail that exists', function(done){
 		var user = defaultUser;
 
-		userdao.insert(user, function (data) {
-			userdao.findByEmail( user.email, function (data){
-				assert.equal(data.name,user.name);
+		userdao.insert(user, function (err, data) {
+			userdao.findByEmail( user.email, function (err, data){
+				if( err ){
+					assert.fail(err,undefined,'should not return an error');
+				}
+				else{
+					assert.equal(data.name,user.name);
+				}
 				done();
 			} );
 		});

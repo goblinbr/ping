@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var handleError = require('./handle-error');
 
 require('./init').init(); // TODO: remove init to deploy app
 
@@ -68,25 +69,7 @@ app.use(function(req, res, next) {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  if( err.status == 404 && req.path.endsWith(".map") ){
-    console.log( 'Path:' + req.path + '  Error: ' + err.status );
-  }
-  else{
-    var errorStatus = (err.status) ? err.status : 500;
-    console.log( 'Path:' + req.path + '  Error: ' + errorStatus + ' - ' + err.stack );
-    res.status(errorStatus);
-    if( err.message ){
-      res.json({
-        status: errorStatus,
-        message: err.message
-      });
-    }
-    else{
-      res.render('error/' + errorStatus + '.html');
-    }
-  }
-});
+app.use(handleError);
 
 
 module.exports = app;

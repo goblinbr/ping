@@ -15,10 +15,11 @@ hosts.insert = function(req, res) {
 	if( user._id != host.userId && user.role != 'admin' ){
 		var err = new Error("Usuário inválido para o host!");
 		err.status = 400;
-		throw err;
+		hosts.handleError(err, req, res);
 	}
-	
-	superInsert(req,res);
+	else{
+		superInsert(req,res);
+	}
 };
 
 var superUpdate = hosts.update;
@@ -30,16 +31,19 @@ hosts.update = function(req, res) {
 	if( user._id != host.userId && user.role != 'admin' ){
 		var err = new Error("Usuário inválido para o host!");
 		err.status = 400;
-		throw err;
+		hosts.handleError(err, req, res);
 	}
-	
-	superUpdate(req,res);
+	else{
+		superUpdate(req,res);
+	}
 };
 
 hosts.findAllByUser = function(req, res) {
 	var user = req.user;
-	hosts.getDao().findAllByUser(user._id.toString(), function(data){
-		res.json(data);
+	hosts.getDao().findAllByUser(user._id.toString(), function(err,data){
+		if( hosts.handleError(err, req, res) ){
+			res.json(data);
+		}
 	});
 };
  

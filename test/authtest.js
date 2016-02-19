@@ -8,7 +8,7 @@ describe('routes/auth', function(){
 	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
 	before(function(done){
-		userdao.removeAll(function () {
+		userdao.deleteAll(function () {
 			userdao.insert( user, function(){
 				done();
 			} );
@@ -16,21 +16,21 @@ describe('routes/auth', function(){
 	})
 
 	it('validate with unknow user', function(done){
-		auth.validate( "asdkasd@klaskd.com", "lkaslkdlkaslkd", function(returnedUser){
+		auth.validate( "asdkasd@klaskd.com", "lkaslkdlkaslkd", function(err, returnedUser){
 			assert.equal(returnedUser,undefined);
 			done();
 		} );
 	});
 
 	it('validate with wrong password', function(done){
-		auth.validate( user.email, "lkaslkdlkaslkd", function(returnedUser){
+		auth.validate( user.email, "lkaslkdlkaslkd", function(err, returnedUser){
 			assert.equal(returnedUser,undefined);
 			done();
 		} );
 	});
 
 	it('validate with right password', function(done){
-		auth.validate( user.email, user.password, function(returnedUser){
+		auth.validate( user.email, user.password, function(err, returnedUser){
 			assert.equal(returnedUser.name,user.name);
 			done();
 		} );
@@ -125,7 +125,10 @@ describe('routes/auth', function(){
 			}
 		};
 
-		auth.validateRequest( request, response );
+		auth.validateRequest( request, response, function(){
+			assert.fail('wrong request validation, should not pass');
+			done();
+		} );
 	});
 
 	it('validateRequest with valid token', function(done){
@@ -208,17 +211,12 @@ describe('routes/auth', function(){
 			},
 
 			json: function(data){
-				assert.fail(data,'undefined','createAccount with invalid user should throw an error');
+				assert.equal(statusCode,400);
 				done();
 			}
 		};
-		try{
-			auth.createAccount( request, response );
-		}
-		catch(err){
-			assert.equal(err.status,400);
-			done();
-		}
+		
+		auth.createAccount( request, response );
 	});
 
 })

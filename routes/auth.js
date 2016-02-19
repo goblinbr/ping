@@ -14,8 +14,8 @@ var auth = {
 			});
 		}
 		else{
-			auth.validate(username, password, function(dbUserObj){
-				if (dbUserObj) {
+			auth.validate(username, password, function(err,dbUserObj){
+				if (dbUserObj && !err) {
 					res.json(genToken(dbUserObj));
 				}
 				else{
@@ -33,8 +33,8 @@ var auth = {
 		var user = (req.body) ? req.body.user : undefined;
 
 		if (user) {
-			userdao.insert(user, function(dbUserObj){
-				if (dbUserObj) {
+			userdao.insert(user, function(err,dbUserObj){
+				if (dbUserObj && !err) {
 					res.json(genToken(dbUserObj));
 				}
 				else{
@@ -55,8 +55,11 @@ var auth = {
 		}
 	},
 
-	validate: function(email, password, returnFunction) {
-		userdao.findByEmail(email, function(user){
+	validate: function(email, password, next) {
+		userdao.findByEmail(email, function(err,user){
+			if( err ){
+				user = undefined;
+			}
 			if( user ){
 				if( user.password != password ){ // TODO: encrypt password
 					user = undefined;
@@ -66,16 +69,16 @@ var auth = {
 					delete user.password;
 				}
 			}
-			returnFunction(user);
+			next(err, user);
 		});
 	},
 
-	validateUser: function(email, returnFunction) {
-		userdao.findByEmail(email, function(user){
+	validateUser: function(email, next) {
+		userdao.findByEmail(email, function(err,user){
 			if( user ){
 				delete user.password;
 			}
-			returnFunction(user);
+			next(err, user);
 		});
 	},
 
@@ -102,8 +105,8 @@ var auth = {
 				}
 
 				// Authorize the user to see if s/he can access our resources
-				auth.validateUser(decoded.email, function(dbUser){
-					if (dbUser) {
+				auth.validateUser(decoded.email, function(err,dbUser){
+					if (dbUser && !err) {
 						if ((req.url.indexOf('admin') >= 0 && dbUser.role == 'admin') || (req.url.indexOf('admin') < 0 && req.url.indexOf('/api/') >= 0)) {
 							req.user = dbUser;
 							next();

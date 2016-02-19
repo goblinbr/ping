@@ -3,8 +3,8 @@ var userdao = require('./js/userdao');
 
 var mod = {
 	init: function() {
-		//userdao.removeAll();
-		hostdao.removeAll();
+		//userdao.deleteAll();
+		hostdao.deleteAll();
 	}	
 };
 
