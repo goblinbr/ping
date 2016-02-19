@@ -4,11 +4,7 @@ var userdao = require('../js/userdao');
 
 
 describe('js/userdao', function(){
-	var defaultUser = {};
-
 	beforeEach(function(done){
-		defaultUser = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
-
 		userdao.deleteAll(function () {
 			done();
 		});
@@ -27,7 +23,7 @@ describe('js/userdao', function(){
 	});
 
 	it('insert', function(done){
-		var user = defaultUser;
+		var user = {name: "User X", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 
 		userdao.insert(user, function (err, data) {
 			if( err ){
@@ -41,7 +37,7 @@ describe('js/userdao', function(){
 	});
 
 	it('findById that exists', function(done){
-		var user = defaultUser;
+		var user = {name: "User X", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 
 		userdao.insert(user, function (err, data) {
 			userdao.findById( data._id, function (err, data){
@@ -69,7 +65,7 @@ describe('js/userdao', function(){
 	});
 
 	it('delete', function(done){
-		var user = defaultUser;
+		var user = {name: "User X", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 		userdao.insert(user, function (err, data) {
 			var id = data._id;
 			userdao.delete( id, function (err, data) {
@@ -87,7 +83,7 @@ describe('js/userdao', function(){
 	});
 
 	it('update', function(done){
-		var user = defaultUser;
+		var user = {name: "User X", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 		userdao.insert(user, function (err,data) {
 			user = data;
 			var id = data._id;
@@ -112,24 +108,27 @@ describe('js/userdao', function(){
 		var insertCount = 0;
 		var totalDocs = 7;
 		var returnFunction = function(err, data){
-			insertCount++;
-			if( insertCount == totalDocs ){
-				userdao.findAll(2, 5, function (err, data) {
-					if( err ){
-						assert.fail(err,undefined,'should not return an error');
-					}
-					else{
-						assert.equal(data.length,2);
-					}
-					done();
-				});
+			if( err ){
+				assert.fail(err,undefined,'should not return an error: ' + err.message);
+			}
+			else{
+				insertCount++;
+				if( insertCount == totalDocs ){
+					userdao.findAll(2, 5, function (err, data) {
+						if( err ){
+							assert.fail(err,undefined,'should not return an error');
+						}
+						else{
+							assert.equal(data.length,2);
+						}
+						done();
+					});
+				}
 			}
 		};
 
 		for( var i = 1; i <= totalDocs; i++ ){
-			var user = defaultUser;
-			user.name = "User " + i;
-			delete user._id;
+			var user = {name: "User " + i, email: "email" + i + "@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 			userdao.insert(user,returnFunction);
 		}
 	});
@@ -138,6 +137,11 @@ describe('js/userdao', function(){
 		var insertCount = 0;
 		var totalDocs = 7;
 		var returnFunction = function(err, data){
+			if( err ){
+				console.log(JSON.stringify(err));
+				console.log(err.stack);
+			}
+
 			insertCount++;
 			if( insertCount == totalDocs ){
 				userdao.count(function(err,data){
@@ -153,15 +157,13 @@ describe('js/userdao', function(){
 		};
 
 		for( var i = 1; i <= totalDocs; i++ ){
-			var user = defaultUser;
-			user.name = "User " + i;
-			delete user._id;
+			var user = {name: "User " + i, email: "email" + i + "@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 			userdao.insert(user,returnFunction);
 		}
 	});
 
 	it('findByEmail that exists', function(done){
-		var user = defaultUser;
+		var user = {name: "User X", email: "xxx@gmail.com", password: "asdasd", active: "Y", timeZone: "America/Sao_Paulo"};
 
 		userdao.insert(user, function (err, data) {
 			userdao.findByEmail( user.email, function (err, data){
@@ -175,4 +177,4 @@ describe('js/userdao', function(){
 			} );
 		});
 	});
-})
+});

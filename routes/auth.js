@@ -1,4 +1,5 @@
 var jwt = require('jwt-simple');
+var handleError = require('../handle-error');
 var userdao = require('../js/userdao');
 
 var auth = {
@@ -34,15 +35,17 @@ var auth = {
 
 		if (user) {
 			userdao.insert(user, function(err,dbUserObj){
-				if (dbUserObj && !err) {
-					res.json(genToken(dbUserObj));
-				}
-				else{
-					res.status(400);
-					res.json({
-						"status": 400,
-						"message": "Não foi possível criar usuário"
-					});
+				if( handleError(err, req, res) ){
+					if( dbUserObj ){
+						res.json(genToken(dbUserObj));
+					}
+					else{
+						res.status(400);
+						res.json({
+							"status": 400,
+							"message": "Não foi possível criar usuário"
+						});
+					}
 				}
 			});
 		}

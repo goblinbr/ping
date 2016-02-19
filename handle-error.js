@@ -5,19 +5,31 @@ var handler = function(err, req, res, next) {
 			console.log( 'Path:' + req.path + '  Error: ' + err.status );
 		}
 		else{
-			var errorStatus = (err.status) ? err.status : 500;
-			if( GLOBAL.ENV != 'TEST' ){
-				console.log( 'Path:' + req.path + '  Error: ' + errorStatus + ' - ' + err.stack );
+			if( err.name == 'MongoError' ){
+				if(!err.message){
+					err.message = err.err;
+				}
+				err.status = 400;
+				if( err.code == 11000 || err.code == 11001 ){ // unique index violation
+					var docName = getDocNameFromIndexError(err.err);
+					var indexName = getIndexNameFromIndexError(err.err);
+					err.message = "duplicate." + docName + "." + indexName;
+				}
 			}
-			res.status(errorStatus);
+
+			err.status = err.status || 500;
+			if( GLOBAL.ENV != 'TEST' ){
+				console.log( 'Path:' + req.path + '  Error: ' + err.status + ' - ' + err.stack );
+			}
+			res.status(err.status);
 			if( err.message ){
 				res.json({
-					status: errorStatus,
+					status: err.status,
 					message: err.message
 				});
 			}
 			else{
-				res.render('error/' + errorStatus + '.html');
+				res.render('error/' + err.status + '.html');
 			}
 		}
 		return false;
@@ -26,5 +38,18 @@ var handler = function(err, req, res, next) {
 		return true;
 	}
 };
+
+// mongoMsg = E11000 duplicate key error collection: pingtest.user index: email_1 dup key: { : \"xxx@gmail.com\" }"
+function getDocNameFromIndexError(mongoMsg){
+	var indexIni = mongoMsg.indexOf('.') + 1;
+	var indexFim = mongoMsg.indexOf(' ', indexIni );
+	return mongoMsg.substring( indexIni, indexFim );
+}
+
+function getIndexNameFromIndexError(mongoMsg){
+	var indexIni = mongoMsg.indexOf('index:') + 7;
+	var indexFim = mongoMsg.indexOf('_', indexIni );
+	return mongoMsg.substring( indexIni, indexFim );	
+}
 
 module.exports = handler;

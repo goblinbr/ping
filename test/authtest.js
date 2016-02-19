@@ -5,7 +5,7 @@ var auth = require('../routes/auth');
 var userdao = require('../js/userdao');
 
 describe('routes/auth', function(){
-	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
+	var user = {name: "User X", email: "mkasdkmaskd@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
 	before(function(done){
 		userdao.deleteAll(function () {
@@ -174,7 +174,7 @@ describe('routes/auth', function(){
 
 
 	it('createAccount with valid user', function(done){
-		var validUser = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
+		var validUser = {name: "User X", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
 
 		var request = {
 			body: {
@@ -217,6 +217,48 @@ describe('routes/auth', function(){
 		};
 		
 		auth.createAccount( request, response );
+	});
+
+	it('createAccount 2 accounts with the same email', function(done){
+		var user1 = {name: "User 1", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo"};
+		var user2 = {name: "User 2", email: "xxx@gmail.com", password: "12312asd", active: "Y", timeZone: "America/Sao_Paulo"};
+
+		var request1 = {
+			body: {
+				user: user1
+			}
+		};
+
+		var request2 = {
+			body: {
+				user: user2
+			}
+		};
+
+		var statusCode = 0;
+
+		var response2 = {
+			status: function(st){
+				statusCode = st;
+			},
+
+			json: function(data){
+				assert.equal(statusCode,400);
+				done();
+			}
+		};		
+
+		var response1 = {
+			status: function(st){
+				statusCode = st;
+			},
+
+			json: function(data){
+				auth.createAccount( request2, response2 );
+			}
+		};
+
+		auth.createAccount( request1, response1 );
 	});
 
 })

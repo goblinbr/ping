@@ -1,12 +1,13 @@
 var dao = require('./genericdao').newDao('user');
 
+dao.getDoc().index('email', { unique: true });
+
 dao.findByEmail = function (email, next) {
 	var doc = dao.getDoc();
 	doc.findOne({email: email}, next);
 };
 
 var superValidate = dao.validate;
-
 dao.validate = function(document,isInsert){
 	if( !document.name || document.name == '' ){
 		return "Informe o nome do usuário!";

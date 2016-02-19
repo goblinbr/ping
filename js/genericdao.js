@@ -37,7 +37,7 @@ var genericDao = {
 					next(err);
 				}
 				else{
-					doc.insert( document, next);
+					doc.insert( document, next );
 				}
 			},
 
