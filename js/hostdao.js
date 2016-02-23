@@ -19,10 +19,10 @@ var superValidate = dao.validate;
 
 dao.validate = function(document,isInsert){
 	if( !document.name || document.name == '' ){
-		return "Informe o nome do host!";
+		return 'missing_host_name';
 	}
 	if( !document.hostname || document.hostname == '' ){
-		return "Informe o endereço/ip do host!";
+		return 'missing_host_hostname';
 	}
 	else{
 		var expressionIp = /((^\s*((([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]))\s*$)|(^\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}))|:)))(%.+)?\s*$))/;
@@ -31,7 +31,7 @@ dao.validate = function(document,isInsert){
 		if( !isValidIP ){
 			var isValidHostname = expressionHostname.test( document.hostname ) && document.hostname.indexOf(".") > 0;
 			if(!isValidHostname){
-				return "Endereço/ip inválido!";
+				return 'invalid_host_hostname';
 			}
 		}
 	}
@@ -39,16 +39,16 @@ dao.validate = function(document,isInsert){
 	if( document.command ){
 		if( document.command == 'C' ){
 			if( !document.port || document.port == '' || document.port <= 0 ){
-				return "Informe a porta do host!";
+				return 'missing_host_port';
 			}
 		}
 		else if( document.command != 'P' ){
-			return "Tipo de comando inválido para o host!";
+			return 'invalid_host_command';
 		}
 	}
 
 	if( !document.userId || document.userId == '' ){
-		return "Informe o usuário para o host!";
+		return 'missing_host_user';
 	}
 
 	var validAttributes = ['name', 'hostname', 'command', 'port', 'userId', 'paidUntil', '_id'];
@@ -63,7 +63,7 @@ dao.validate = function(document,isInsert){
 			}
 		}
 		if( !valid ){
-			return "Atributo " + attribute + " inválido para hosts!";
+			return "invalid_host_" + attribute;
 		}
 	}
 	return superValidate(document, isInsert);

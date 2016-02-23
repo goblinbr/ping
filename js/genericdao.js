@@ -68,7 +68,7 @@ var genericDao = {
 			validate: function(document,isInsert){
 				if( !isInsert ){
 					if( document._id == undefined ){
-						return "Documento não tem atributo _id";
+						return "missing_id_to_update";
 					}
 				}
 				return "";

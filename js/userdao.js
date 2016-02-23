@@ -10,22 +10,22 @@ dao.findByEmail = function (email, next) {
 var superValidate = dao.validate;
 dao.validate = function(document,isInsert){
 	if( !document.name || document.name == '' ){
-		return "Informe o nome do usuário!";
+		return 'missing_user_name';
 	}
 	if( !document.email || document.email == '' ){
-		return "Informe o email do usuário!";
+		return 'missing_user_email';
 	}
 	else{
 		// TOOD: validate email
 	}
 	if( !document.password || document.password == '' ){
-		return "Informe a senha do usuário!";
+		return 'missing_user_password';
 	}
 	else{
 		// TODO: validate password
 	}
 	if( !document.timeZone || document.timeZone == '' ){
-		return "Informe o fuso horário do usuário!";
+		return 'missing_user_timezone';
 	}
 	else{
 		// TODO: validate timeZone
@@ -43,7 +43,7 @@ dao.validate = function(document,isInsert){
 			}
 		}
 		if( !valid ){
-			return "Atributo " + attribute + " inválido para usuários!";
+			return "invalid_user_" + attribute;
 		}
 	}
 	return superValidate(document, isInsert);

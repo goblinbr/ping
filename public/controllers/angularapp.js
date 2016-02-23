@@ -1,5 +1,28 @@
 var angularApp = angular.module('app', ['ngCookies']);
 
+angularApp.translations = {
+	duplicate_user_email: "Email já está cadastrado!",
+	invalid_host_hostname: "Endereço/ip inválido!",
+	invalid_host_command: "Tipo de comando inválido para o host!",
+	missing_host_user: "Informe o usuário para o host!",
+	missing_id_to_update: "Registro sem o campo _id!",
+	missing_host_name: "Informe o nome do host!",
+	missing_host_hostname: "Informe o endereço/ip do host!",
+	missing_host_port: "Informe a porta do host!",
+	missing_user_name: "Informe o nome do usuário!",
+	missing_user_email: "Informe o email do usuário!",
+	missing_user_password: "Informe a senha do usuário!",
+	missing_user_timezone: "Informe o fuso horário do usuário!"
+};
+
+angularApp.translateError = function(data){
+	var userMessage = angularApp.translations[data.message];
+	if(userMessage){
+		data.apiMessage = data.message;
+		data.message = userMessage;
+	}
+};
+
 angularApp.factory('loginService', ['$http', '$window', '$cookies', function($http, $window, $cookies) {
 	var storageSession = function(data, stayLoggedIn){
 		$window.sessionStorage.userId = data.user._id;
@@ -69,6 +92,7 @@ angularApp.factory('loginService', ['$http', '$window', '$cookies', function($ht
 			};
 
 			var onError = function(response){
+				angularApp.translateError(response.data);
 				if(errorCallback){
 					errorCallback(response);
 				}
@@ -114,6 +138,7 @@ angularApp.factory('loginService', ['$http', '$window', '$cookies', function($ht
 			};
 
 			var onError = function(response){
+				angularApp.translateError(response.data);
 				if(errorCallback){
 					errorCallback(response);
 				}
@@ -158,6 +183,7 @@ angularApp.factory('restApi', ['$http', 'loginService', function($http, loginSer
 				if( !data.status ){
 					data.status = response.status;
 				}
+				angularApp.translateError(data);
 				errorCallback(data);
 			}
 			else{
@@ -170,7 +196,6 @@ angularApp.factory('restApi', ['$http', 'loginService', function($http, loginSer
 			}
 		};
 	}
-
 
 	var api = {
 		get: function(url, successCallback, errorCallback){

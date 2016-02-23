@@ -13,7 +13,7 @@ var handler = function(err, req, res, next) {
 				if( err.code == 11000 || err.code == 11001 ){ // unique index violation
 					var docName = getDocNameFromIndexError(err.err);
 					var indexName = getIndexNameFromIndexError(err.err);
-					err.message = "duplicate." + docName + "." + indexName;
+					err.message = "duplicate_" + docName + "_" + indexName;
 				}
 			}
 
