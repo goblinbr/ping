@@ -15,6 +15,22 @@ dao.findAllByUser = function(userId, next) {
 	doc.find({userId: userId}, next);
 };
 
+dao.findAllPaidGreaterThanToday = function(page,docsPerPage,next) {
+	var doc = dao.getDoc();
+	var options = {};
+	if( page > 0 && docsPerPage > 0 ){
+		options.limit = docsPerPage;
+		options.skip = (page - 1) * docsPerPage;
+	}
+
+	doc.find({ paidUntil: { $gt: new Date() } }, options, next);
+};
+
+dao.countPaidGreaterThanToday = function(next) {
+	var doc = dao.getDoc();
+	doc.count( { paidUntil: { $gt: new Date() } }, next);
+};
+
 var superValidate = dao.validate;
 
 dao.validate = function(document,isInsert){

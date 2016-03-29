@@ -4,7 +4,7 @@ var userdao = require('./js/userdao');
 var mod = {
 	init: function() {
 		//userdao.deleteAll();
-		hostdao.deleteAll();
+		//hostdao.deleteAll();
 	}	
 };
 

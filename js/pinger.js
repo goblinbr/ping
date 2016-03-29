@@ -43,16 +43,16 @@ var pinger = {
 			client.setTimeout( timeout );
 
 			client.on('error', function(data) {
-				console.log( 'error ' + data );
+				//console.log( 'error ' + data );
 				returnFunction( false );
 			});
 
-			client.on('close', function(data) {
-				console.log( 'close ' + data );
-			});
+			//client.on('close', function(data) {
+				//console.log( 'close ' + data );
+			//});
 
 			client.on('timeout', function(data) {
-				console.log( 'timeout ' + data );
+				//console.log( 'timeout ' + data );
 				returnFunction( false );
 			});
 
