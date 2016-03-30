@@ -8,7 +8,14 @@ dao.insert = function(document, next) {
 
 	document.paidUntil = date;
 	superInsert(document,next);
-},
+};
+
+var superUpdate = dao.update;
+
+dao.update = function(document, next) {
+	delete document.paidUntil;
+	superUpdate(document,next);
+};
 
 dao.findAllByUser = function(userId, next) {
 	var doc = dao.getDoc();

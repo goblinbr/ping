@@ -8,7 +8,7 @@ if( os.type().toLowerCase().indexOf("win") == 0 ){
 }
 
 var pinger = {
-	pingOrConnect: function(host, timeout, callback) {
+	pingOrConnect: function(host, timeout, next) {
 		var startMs = new Date().getTime();
 
 		var ret = {
@@ -24,7 +24,7 @@ var pinger = {
 		  		ret.ms = endMs - startMs;
 		  		ret.online = code == 0;
 
-		  		callback( ret );
+		  		next( ret );
 			});
         }
         else {
@@ -37,7 +37,7 @@ var pinger = {
 
 		  		client.destroy();
 
-		  		callback( ret );
+		  		next( ret );
 			};
 
 			client.setTimeout( timeout );

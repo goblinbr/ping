@@ -15,13 +15,36 @@ var onSucess = function(host,ms,next) {
 };
 
 var onFail = function(host,next) {
-	// TODO: ping redudantHosts, insert if is online or offline
-	for( var i = 0; i < redundantHosts.length; i++ ){
-	}
+	var i = 0;
+	var nextRedudantPing = function() {
+		if( i < redundantHosts.length ){
+			var redHost  = redundantHosts[i];
+			i++;
+			pinger.pingOrConnect( redHost, timeout, function(ret){
+				if( ret.online ){
+					nextRedudantPing();
+				}
+				else{
+					// TODO: insert that our system is offline
+					console.log( 'OFFLINE' );
+					next();
+				}
+			} );
+		}
+		else{
+			pinger.pingOrConnect( host, 5000, function(ret){
+				if( ret.online ){
+					onSucess( host, ret.ms, next );
+				}
+				else{
+					console.log( host.command + ': ' + host.name + ' = OFFLINE' );
+					next();
+				}
+			});
+		}
+	};
 
-	//next();
-	console.log( host.command + ': ' + host.name + ' = OFFLINE' );
-	next();
+	nextRedudantPing();
 };
 
 var app = {
@@ -49,7 +72,7 @@ var app = {
 									else{
 										onFail( host, nextHost );
 									}
-								} )
+								} );
 							}
 							else{
 								nextPage();

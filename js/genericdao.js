@@ -57,7 +57,15 @@ var genericDao = {
 					next(err);
 				}
 				else{
-					doc.update( { _id: document._id }, document , next);
+					var updateFields = {};
+
+					for(var attribute in document){
+						if( attribute != '_id' ){
+							updateFields[attribute] = document[attribute];
+						}
+					}
+
+					doc.update( { _id: document._id }, { $set: updateFields } , next);
 				}
 			},
 
