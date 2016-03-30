@@ -1,6 +1,6 @@
 var jwt = require('jwt-simple');
 var handleError = require('../handle-error');
-var userdao = require('../js/userdao');
+var userdao = require('../js/dao/userdao');
 
 var auth = {
 	login: function(req, res) {

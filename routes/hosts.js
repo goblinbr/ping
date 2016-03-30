@@ -1,6 +1,6 @@
-var hostdao = require('../js/hostdao.js');
+var hostdao = require('../js/dao/hostdao');
 
-var hosts = require('./crudrouter.js').newRouter(hostdao);
+var hosts = require('./crudrouter').newRouter(hostdao);
 
 var superInsert = hosts.insert;
 

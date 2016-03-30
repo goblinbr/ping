@@ -1,6 +1,6 @@
 var _global = require('./global');
 var assert = require('assert');
-var userdao = require('../js/userdao');
+var userdao = require('../js/dao/userdao');
 
 
 describe('js/userdao', function(){

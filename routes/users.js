@@ -1,4 +1,4 @@
-var userdao = require('../js/userdao');
+var userdao = require('../js/dao/userdao');
 
 var users = require('./crudrouter.js').newRouter(userdao);
  

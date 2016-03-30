@@ -2,7 +2,7 @@ var _global = require('./global');
 var assert = require('assert');
 
 var auth = require('../routes/auth');
-var userdao = require('../js/userdao');
+var userdao = require('../js/dao/userdao');
 
 describe('routes/auth', function(){
 	var user = {name: "User X", email: "mkasdkmaskd@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};

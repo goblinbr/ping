@@ -1,5 +1,5 @@
-var hostdao = require('./js/hostdao');
-var userdao = require('./js/userdao');
+var hostdao = require('./js/dao/hostdao');
+var userdao = require('./js/dao/userdao');
 
 var mod = {
 	init: function() {

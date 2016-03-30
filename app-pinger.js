@@ -1,6 +1,6 @@
 var _global = require('./global');
 
-var hostdao = require('./js/hostdao');
+var hostdao = require('./js/dao/hostdao');
 var pinger = require('./js/pinger');
 
 var timeout = 500;

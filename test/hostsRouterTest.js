@@ -2,8 +2,8 @@ var _global = require('./global');
 var assert = require('assert');
 
 var hosts = require('../routes/hosts');
-var userdao = require('../js/userdao');
-var hostdao = require('../js/hostdao');
+var userdao = require('../js/dao/userdao');
+var hostdao = require('../js/dao/hostdao');
 
 describe('routes/hosts', function(){
 	var user = {name: "Rodrigo de Bona Sartor", email: "xxx@gmail.com", password: "abcd1234", active: "Y", timeZone: "America/Sao_Paulo", token: "ABC-0123-ASDASD"};
