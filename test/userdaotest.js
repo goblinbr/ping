@@ -3,7 +3,7 @@ var assert = require('assert');
 var userdao = require('../js/dao/userdao');
 
 
-describe('js/userdao', function(){
+describe('js/dao/userdao', function(){
 	beforeEach(function(done){
 		userdao.deleteAll(function () {
 			done();
