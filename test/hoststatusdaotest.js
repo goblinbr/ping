@@ -94,4 +94,95 @@ describe('js/dao/hoststatusdao', function(){
 		});
 	});
 
+	it('findOpenStatus with 1 open status', function(done){
+		var hoststatus1 = {hostId: '1', start: new Date(), finish: new Date(), online: false};
+		var hoststatus2 = {hostId: '1', start: new Date(), online: true};
+
+		hoststatusdao.insert(hoststatus1, function (err, data) {
+			if( err ){
+				assert.fail(err,undefined,'1 - should not return an error');
+			}
+			else{
+				hoststatusdao.insert(hoststatus2, function (err, data) {
+					if( err ){
+						assert.fail(err,undefined,'2 - should not return an error');
+					}
+					else{
+						hoststatusdao.findOpenStatus( '1', function(err, data){
+							if( err ){
+								assert.fail(err,undefined,'3 - should not return an error');
+							}
+							else{
+								assert.equal( data.hostId, hoststatus2.hostId );
+								assert.equal( data.finish, undefined );
+								done();
+							}
+						} );
+					}
+				});
+			}
+		});
+	});
+
+	it('findOpenStatus with 2 open status', function(done){
+		var hoststatus1 = {hostId: '1', start: new Date(), finish: new Date(), online: false};
+		var hoststatus2 = {hostId: '1', start: new Date(), online: false};
+		var hoststatus3 = {hostId: '2', start: new Date(), online: false};
+
+		hoststatusdao.insert(hoststatus1, function (err, data) {
+			if( err ){
+				assert.fail(err,undefined,'1 - should not return an error');
+			}
+			else{
+				hoststatusdao.insert(hoststatus2, function (err, data) {
+					if( err ){
+						assert.fail(err,undefined,'2 - should not return an error');
+					}
+					else{
+						hoststatusdao.insert(hoststatus3, function (err, data) {
+							if( err ){
+								assert.fail(err,undefined,'3 - should not return an error');
+							}
+							else{
+								hoststatusdao.findOpenStatus( '1', function(err, data){
+									if( err ){
+										assert.fail(err,undefined,'4 - should not return an error');
+									}
+									else{
+										assert.equal( data.hostId, hoststatus2.hostId );
+										assert.equal( data.finish, undefined );
+										done();
+									}
+								} );
+							}
+						});
+					}
+				});
+			}
+		});
+	});
+
+
+	it('findOpenStatus without open status', function(done){
+		var hoststatus1 = {hostId: '1', start: new Date(), finish: new Date(), online: false};
+
+		hoststatusdao.insert(hoststatus1, function (err, data) {
+			if( err ){
+				assert.fail(err,undefined,'1 - should not return an error');
+			}
+			else{
+				hoststatusdao.findOpenStatus( '1', function(err, data){
+					if( err ){
+						assert.fail(err,undefined,'4 - should not return an error');
+					}
+					else{
+						assert.equal( data, undefined );
+						done();
+					}
+				} );
+			}
+
+		});
+	});
+
 });

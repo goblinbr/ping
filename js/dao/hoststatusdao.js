@@ -1,5 +1,10 @@
 var dao = require('./genericdao').newDao('hoststatus');
 
+dao.findOpenStatus = function (hostId, next) {
+	var doc = dao.getDoc();
+	doc.findOne({hostId: hostId, finish: null}, next);
+};
+
 var superValidate = dao.validate;
 
 dao.validate = function(document,isInsert){
