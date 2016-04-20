@@ -3,6 +3,8 @@ var handler = function(err, req, res, next) {
 	if( err ){
 		if( err.status == 404 && req.path.endsWith(".map") ){
 			console.log( 'Path:' + req.path + '  Error: ' + err.status );
+			res.status(err.status);
+			res.end();
 		}
 		else{
 			if( err.name == 'MongoError' ){
@@ -22,14 +24,22 @@ var handler = function(err, req, res, next) {
 				console.log( 'Path:' + req.path + '  Error: ' + err.status + ' - ' + err.stack );
 			}
 			res.status(err.status);
-			if( err.message ){
+			if( err.status == 404 ){
+				if( req.path.endsWith(".html") ){
+					res.redirect('/error/' + err.status + '.html');
+				}
+				else{
+					res.end();
+				}
+			}
+			else if( err.message ){
 				res.json({
 					status: err.status,
 					message: err.message
 				});
 			}
 			else{
-				res.render('error/' + err.status + '.html');
+				res.redirect('/error/' + err.status + '.html');
 			}
 		}
 		return false;
